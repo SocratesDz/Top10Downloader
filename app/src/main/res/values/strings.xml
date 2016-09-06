@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Top10Downloader</string>
+    <string name="url_download">http://blog.desdelinux.net/feed/</string>
+</resources>
