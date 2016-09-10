@@ -1,9 +1,11 @@
 package com.socratesdiaz.top10downloader;
 
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -13,18 +15,31 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView xmlTextView;
+    private ListView itemListView;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        xmlTextView = (TextView) findViewById(R.id.xmlTextView);
+        itemListView = (ListView) findViewById(R.id.rss_items_list);
         DownloadData downloadData = new DownloadData();
         downloadData.execute(getString(R.string.url_download));
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                DownloadData downloadDataTask = new DownloadData();
+                downloadDataTask.execute(getString(R.string.url_download));
+            }
+        });
+
     }
 
     private class DownloadData extends AsyncTask<String, Void, String> {
@@ -38,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
             if(mFileContents == null) {
                 Log.d(LOG_TAG, "Error downloading");
             }
+            else {
+                RSSItemParser parser = new RSSItemParser(mFileContents);
+                parser.proccess();
+                ArrayList<RSSItem> items = parser.getRssItems();
+            }
 
             return mFileContents;
         }
@@ -46,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(LOG_TAG, "Result was: " + s);
-            xmlTextView.setText(s);
+            swipeRefreshLayout.setRefreshing(false);
         }
 
         private String downloadXMLFile(String urlPath) {
