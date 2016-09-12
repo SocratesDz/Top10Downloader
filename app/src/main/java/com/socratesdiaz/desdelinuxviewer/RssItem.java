@@ -1,4 +1,6 @@
-package com.socratesdiaz.top10downloader;
+package com.socratesdiaz.desdelinuxviewer;
+
+import android.graphics.Bitmap;
 
 import java.util.Date;
 
@@ -11,6 +13,8 @@ public class RssItem {
     private String comments;
     private String description;
     private Date pubDate;
+    private String imageUrl;
+    private Bitmap image;
 
     public String getTitle() {
         return title;
@@ -50,5 +54,21 @@ public class RssItem {
 
     public void setPubDate(Date pubDate) {
         this.pubDate = pubDate;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DesdeLinux" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/desdeLinuxMain</item>
+        <item name="colorPrimaryDark">@color/desdeLinuxMainDark</item>
+        <item name="colorAccent">@color/desdeLinuxAccent</item>
+    </style>
+
 </resources>

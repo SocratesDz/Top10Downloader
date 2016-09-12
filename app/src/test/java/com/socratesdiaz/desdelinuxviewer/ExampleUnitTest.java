@@ -1,4 +1,4 @@
-package com.socratesdiaz.top10downloader;
+package com.socratesdiaz.desdelinuxviewer;
 
 import org.junit.Test;
 

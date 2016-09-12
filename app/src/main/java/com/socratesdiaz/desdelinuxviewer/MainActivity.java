@@ -1,5 +1,7 @@
-package com.socratesdiaz.top10downloader;
+package com.socratesdiaz.desdelinuxviewer;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         itemListView = (ListView) findViewById(R.id.rss_items_list);
 
-        listAdapter = new RssItemListAdapter();
+        listAdapter = new RssItemListAdapter(this, R.layout.rss_item_list);
         itemListView.setAdapter(listAdapter);
 
         DownloadData downloadData = new DownloadData();
@@ -43,29 +45,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private class DownloadData extends AsyncTask<String, Void, String> {
+    private class DownloadData extends AsyncTask<String, Void, ArrayList<RssItem>> {
 
         public final String LOG_TAG = this.getClass().getSimpleName();
         private String mFileContents;
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected ArrayList<RssItem> doInBackground(String... strings) {
             mFileContents = downloadXMLFile(strings[0]);
             if(mFileContents == null) {
                 Log.d(LOG_TAG, "Error downloading");
             }
 
-            return mFileContents;
+            RssItemParser parser = new RssItemParser(mFileContents);
+            parser.process();
+            ArrayList<RssItem> items = parser.getRssItems();
+            return items;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            if(s != null) {
-                RssItemParser parser = new RssItemParser(s);
-                parser.process();
-                ArrayList<RssItem> items = parser.getRssItems();
-                listAdapter.setRssItems(items);
+        protected void onPostExecute(ArrayList<RssItem> items) {
+            super.onPostExecute(items);
+            if(items != null) {
+                listAdapter.clear();
+                listAdapter.addAll(items);
             }
             swipeRefreshLayout.setRefreshing(false);
         }

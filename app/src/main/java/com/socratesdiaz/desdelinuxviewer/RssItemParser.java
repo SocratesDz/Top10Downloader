@@ -1,4 +1,4 @@
-package com.socratesdiaz.top10downloader;
+package com.socratesdiaz.desdelinuxviewer;
 
 import android.util.Log;
 
@@ -8,6 +8,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Sócrates Díaz S on 9/10/2016.
@@ -74,8 +75,18 @@ public class RssItemParser {
                         }
                         if (tagName.equalsIgnoreCase("pubDate") && inEntry
                                 && currentRecord != null) {
-                            SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
-                            currentRecord.setPubDate(formatter.parse(textValue));
+                            try {
+                                SimpleDateFormat formatter =
+                                        new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.US);
+                                currentRecord.setPubDate(formatter.parse(textValue));
+                            }
+                            catch(Exception e) {
+                                Log.v(LOG_TAG, e.getMessage());
+                            }
+                        }
+                        if(tagName.equalsIgnoreCase("image") && inEntry
+                                && currentRecord != null) {
+                            currentRecord.setImageUrl(textValue);
                         }
                         break;
 

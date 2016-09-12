@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rss_item"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:padding="10dp"
     android:orientation="vertical">
 
@@ -18,5 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Descripcion larga de la noticia"
-        android:textAppearance="@android:style/TextAppearance.Small"/>
+        android:textAppearance="@android:style/TextAppearance.Small"
+        android:scrollHorizontally="true"
+        android:ellipsize="end"
+        android:maxLines="3"/>
 </LinearLayout>
