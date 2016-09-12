@@ -6,28 +6,29 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
  * Created by Sócrates Díaz S on 9/10/2016.
  */
-public class RSSItemParser {
-    public static final String LOG_TAG = RSSItem.class.getSimpleName();
+public class RssItemParser {
+    public static final String LOG_TAG = RssItem.class.getSimpleName();
     private String xmlData;
-    private ArrayList<RSSItem> rssItems;
+    private ArrayList<RssItem> rssItems;
 
-    public RSSItemParser(String xmlData) {
+    public RssItemParser(String xmlData) {
         this.xmlData = xmlData;
-        this.rssItems = new ArrayList<RSSItem>();
+        this.rssItems = new ArrayList<RssItem>();
     }
 
-    public ArrayList<RSSItem> getRssItems() {
+    public ArrayList<RssItem> getRssItems() {
         return rssItems;
     }
 
-    public boolean proccess() {
+    public boolean process() {
         boolean status = true;
-        RSSItem currentRecord;
+        RssItem currentRecord = null;
         boolean inEntry = false;
         String textValue = "";
 
@@ -42,16 +43,39 @@ public class RSSItemParser {
                 String tagName = xpp.getName();
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
-                        Log.d(LOG_TAG, "Starting tag for " + tagName);
                         if(tagName.equalsIgnoreCase("item")) {
                             inEntry = true;
-                            currentRecord = new RSSItem();
-                            break;
+                            currentRecord = new RssItem();
                         }
+                        break;
+                    case XmlPullParser.TEXT:
+                        textValue = xpp.getText();
+                        break;
                     case XmlPullParser.END_TAG:
-                        Log.d(LOG_TAG, "Ending tag for " + tagName);
                         if(tagName.equalsIgnoreCase("item")) {
                             inEntry = false;
+                            rssItems.add(currentRecord);
+                        }
+                        if(tagName.equalsIgnoreCase("title") && inEntry
+                                && currentRecord != null) {
+                            currentRecord.setTitle(textValue);
+                        }
+                        if(tagName.equalsIgnoreCase("link") && inEntry
+                                && currentRecord != null) {
+                            currentRecord.setLink(textValue);
+                        }
+                        if(tagName.equalsIgnoreCase("comments") && inEntry
+                                && currentRecord != null) {
+                            currentRecord.setComments(textValue);
+                        }
+                        if(tagName.equalsIgnoreCase("description") && inEntry
+                                && currentRecord != null) {
+                            currentRecord.setDescription(textValue);
+                        }
+                        if (tagName.equalsIgnoreCase("pubDate") && inEntry
+                                && currentRecord != null) {
+                            SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+                            currentRecord.setPubDate(formatter.parse(textValue));
                         }
                         break;
 
@@ -59,13 +83,11 @@ public class RSSItemParser {
                 }
                 eventType = xpp.next();
             }
-
-            return true;
         } catch (Exception e) {
             status = false;
             e.printStackTrace();
-            return false;
         }
+        return status;
     }
 
 }

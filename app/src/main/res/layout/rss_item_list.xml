@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rss_item"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/rss_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Titulo de la noticia"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        />
+    <TextView
+        android:id="@+id/rss_item_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descripcion larga de la noticia"
+        android:textAppearance="@android:style/TextAppearance.Small"/>
+</LinearLayout>

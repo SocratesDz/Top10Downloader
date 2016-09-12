@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by Sócrates Díaz S on 9/10/2016.
  */
-public class RSSItem {
+public class RssItem {
     private String title;
     private String link;
     private String comments;

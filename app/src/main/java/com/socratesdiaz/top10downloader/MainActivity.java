@@ -6,9 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,12 +18,17 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView itemListView;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RssItemListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         itemListView = (ListView) findViewById(R.id.rss_items_list);
+
+        listAdapter = new RssItemListAdapter();
+        itemListView.setAdapter(listAdapter);
+
         DownloadData downloadData = new DownloadData();
         downloadData.execute(getString(R.string.url_download));
 
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
                 downloadDataTask.execute(getString(R.string.url_download));
             }
         });
-
     }
 
     private class DownloadData extends AsyncTask<String, Void, String> {
@@ -53,11 +54,6 @@ public class MainActivity extends AppCompatActivity {
             if(mFileContents == null) {
                 Log.d(LOG_TAG, "Error downloading");
             }
-            else {
-                RSSItemParser parser = new RSSItemParser(mFileContents);
-                parser.proccess();
-                ArrayList<RSSItem> items = parser.getRssItems();
-            }
 
             return mFileContents;
         }
@@ -65,7 +61,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d(LOG_TAG, "Result was: " + s);
+            if(s != null) {
+                RssItemParser parser = new RssItemParser(s);
+                parser.process();
+                ArrayList<RssItem> items = parser.getRssItems();
+                listAdapter.setRssItems(items);
+            }
             swipeRefreshLayout.setRefreshing(false);
         }
 
